@@ -79,7 +79,7 @@ class Api
             print_r($errors);
             die;
         }else{
-            print_r("The real estate \"{$input['title']}\" ad has been added.\n");
+            print_r("The {$input['vertical']} ad : \"{$input['title']}\"  has been added. Thanks !\n");
         }
     }
 }

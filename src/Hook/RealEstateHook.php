@@ -13,8 +13,8 @@ class RealEstateHook
         $formatted_ad = []; //not required initialization just for understanding
 
         $formatted_ad['id']         = $ad['id'];
-        $formatted_ad['title']      = $ad['titre'];
-        $formatted_ad['body']       = $ad['description'];
+        $formatted_ad['title']      = substr($ad['titre'], 0, 100);
+        $formatted_ad['body']       = substr($ad['description'], 0, 500);
         $formatted_ad['vertical']   = self::$vertical;
         $formatted_ad['price']      = (int) $ad['prix'];
         $formatted_ad['city']       = $ad['ville'];

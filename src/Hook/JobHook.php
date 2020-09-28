@@ -20,7 +20,7 @@ class JobHook
         $formatted_ad = []; //not required initialization just for understanding
 
         $formatted_ad['id']         = $this->getID();
-        $formatted_ad['title']      = $ad['title'];
+        $formatted_ad['title']      = substr($ad['title'], 0, 100);
         $formatted_ad['vertical']   = self::$vertical;
         $formatted_ad['city']       = $ad['location_city'];
         //$formatted_ad['zip_code'] = $ad['code_postal']; // TODO: get zip code from geolocation API webservice as GOogle Maps or OpenStreetMap ?
