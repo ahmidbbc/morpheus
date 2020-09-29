@@ -3,6 +3,7 @@
 namespace App\Hook;
 
 use App\Converter\XMLConverter;
+use Symfony\Component\HttpClient\HttpClient;
 
 class JobHook
 {
@@ -25,7 +26,6 @@ class JobHook
         $formatted_ad['title']      = substr($ad['title'], 0, 100);
         $formatted_ad['vertical']   = self::$vertical;
         $formatted_ad['city']       = $ad['location_city'];
-        //$formatted_ad['zip_code'] = $ad['code_postal']; // TODO: get zip code from geolocation API webservice as Google Maps or OpenStreetMap ?
         $formatted_ad['pro_ad']     = self::$pro_ad;
         //$formatted_ad['contract']   = $ad['time_type'];
         //$formatted_ad['salary']   = ''; // optional
@@ -38,13 +38,23 @@ class JobHook
         $picturesString = trim($ad['pictures']);
         $picturesFormat = str_replace(" ", "\n", $picturesString);
         $picturesArray = explode("\n", $picturesFormat);
-        $pictures = $this->trimAd($picturesArray);
+        $pictures = $this->trimArray($picturesArray);
 
         //add array of pictures
         $formatted_ad['images']     = $pictures;
 
+        // TODO: get zip code from geolocation API webservice as Google Maps or openStreetMap ?
+        /**
+         * instance of GeolocationHook
+         * get zip code from openStreetMap API webservice : less reliable than Google Map
+         * sometimes missing the zip code : ex. Metz with location_state 57 not returning entire postcode
+         */
+        $geo = new GeolocationHook();
+        $address = $geo->getZipCode( $ad['location_city'], $ad['location_state'] );
+        $address ? $formatted_ad['zip_code'] = $address : '';
 
-        //var_dump($formatted_ad);
+
+        var_dump($formatted_ad);
 
         return $formatted_ad;
     }
@@ -78,7 +88,7 @@ class JobHook
      * @param array $ad
      * @return array
      */
-    public function trimAd(array $ad): array
+    public function trimArray(array $ad): array
     {
         $array = array();
 

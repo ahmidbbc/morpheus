@@ -29,9 +29,7 @@ class RealEstateHook
         // equivalent to !empty($ad['categorie'])
         $formatted_ad['category']   = $ad['categorie'] ? 4 : 0;
         // equivalent to if($formatted_ad['category']) { $formatted_ad['type'] = $ad['type'] }
-        // or ternary : $formatted_ad['category'] ? $formatted_ad['type'] = $ad['type'] : '';
         $formatted_ad['category'] ? $formatted_ad['type'] = $ad['type'] : '';
-        // $formatted_ad['type'] = $formatted_ad['type'] ?? '';
 
         //var_dump($formatted_ad);
 

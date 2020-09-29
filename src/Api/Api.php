@@ -79,7 +79,7 @@ class Api
             print_r($errors);
             die;
         }else{
-            print_r("The {$input['vertical']} ad : \"{$input['title']}\"  has been added. Thanks !\n");
+            print_r("***** The {$input['vertical']} ad : \"{$input['title']}\"  has been added. Thanks ! *****\n\n");
         }
     }
 }

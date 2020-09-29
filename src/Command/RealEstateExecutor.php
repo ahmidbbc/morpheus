@@ -12,11 +12,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RealEstateExecutor extends Command
 {
 
+    private RealEstateHook $formatter;
+    private Api $api;
+
     // command to execute (terminal) : "php bin/console real-estate-executor"
     protected function configure()
     {
         $this->setName('real-estate-executor');
         $this->formatter = new RealEstateHook();
+        $this->api = new Api();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -35,8 +39,8 @@ class RealEstateExecutor extends Command
              * format this ad
              * @param $ad: array
              */
-            $hook = new RealEstateHook();
-            $formatted_ads[$ad['id']] = $hook->formatAd($ad);
+            //$hook = new RealEstateHook();
+            $formatted_ads[$ad['id']] = $this->formatter->formatAd($ad);
             //var_dump($formatted_ads);
 
             /**
@@ -45,12 +49,12 @@ class RealEstateExecutor extends Command
              * @param $input: array
              * @param $vertical: string
              */
-            $api = new Api();
-            $api->send($formatted_ads[$ad['id']], $formatted_ads[$ad['id']]['vertical']);
+            //$api = new Api();
+            $this->api->send($formatted_ads[$ad['id']], $formatted_ads[$ad['id']]['vertical']);
 
         }
 
-        print_r($formatted_ads);
+        //print_r($formatted_ads);
 
         return 0;
     }

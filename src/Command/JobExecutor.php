@@ -11,11 +11,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class JobExecutor extends Command
 {
+    private JobHook $formatter;
+    private Api $api;
+
     // command to execute (terminal) : "php bin/console job-executor"
     protected function configure()
     {
         $this->setName('job-executor');
         $this->formatter = new JobHook();
+        $this->api = new Api();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -34,8 +38,8 @@ class JobExecutor extends Command
              * format this ad
              * @param $ad: array
              */
-            $jobHook = new JobHook();
-            $formatted_ads[$ad['id']] = $jobHook->formatAd($ad);
+            //$jobHook = new JobHook();
+            $formatted_ads[$ad['id']] = $this->formatter->formatAd($ad);
 
             /**
              * instance of Api
@@ -43,11 +47,12 @@ class JobExecutor extends Command
              * @param $input: array
              * @param $vertical: string
              */
-            $api = new Api();
-            $api->send($formatted_ads[$ad['id']], $formatted_ads[$ad['id']]['vertical']);
+            //$api = new Api();
+            $this->api->send($formatted_ads[$ad['id']], $formatted_ads[$ad['id']]['vertical']);
+
         }
 
-        print_r($formatted_ads);
+        //print_r($formatted_ads);
 
         return 0;
 
