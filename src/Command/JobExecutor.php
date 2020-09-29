@@ -52,7 +52,7 @@ class JobExecutor extends Command
 
         }
 
-        //print_r($formatted_ads);
+        print_r($formatted_ads);
 
         return 0;
 

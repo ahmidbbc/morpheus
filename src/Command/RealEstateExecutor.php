@@ -41,7 +41,6 @@ class RealEstateExecutor extends Command
              */
             //$hook = new RealEstateHook();
             $formatted_ads[$ad['id']] = $this->formatter->formatAd($ad);
-            //var_dump($formatted_ads);
 
             /**
              * instance of Api
@@ -54,7 +53,7 @@ class RealEstateExecutor extends Command
 
         }
 
-        //print_r($formatted_ads);
+        print_r($formatted_ads);
 
         return 0;
     }

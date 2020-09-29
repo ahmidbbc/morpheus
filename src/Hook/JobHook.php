@@ -54,7 +54,7 @@ class JobHook
         $address ? $formatted_ad['zip_code'] = $address : '';
 
 
-        var_dump($formatted_ad);
+        //var_dump($formatted_ad);
 
         return $formatted_ad;
     }
