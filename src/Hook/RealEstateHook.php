@@ -46,7 +46,7 @@ class RealEstateHook
     /**
      * return unique id
      * @return int
-     * TODO: duplicate => service ?
+     * TODO: duplicate in JobHook => service ?
      */
     function getID(): int
     {

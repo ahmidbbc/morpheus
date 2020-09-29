@@ -12,6 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RealEstateExecutor extends Command
 {
 
+    // TODO : duplicate code in JobExecutor
     private RealEstateHook $formatter;
     private Api $api;
 

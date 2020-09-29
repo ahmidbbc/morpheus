@@ -44,6 +44,7 @@ class JobHook
         $formatted_ad['images']     = $pictures;
 
         // TODO: get zip code from geolocation API webservice as Google Maps or openStreetMap ?
+        // TODO : done !? improve ??
         /**
          * instance of GeolocationHook
          * get zip code from openStreetMap API webservice : less reliable than Google Map
@@ -74,7 +75,7 @@ class JobHook
     /**
      * return unique id
      * @return int
-     * TODO: duplicate => service ?
+     * TODO: duplicate in RealEstateHook => service ?
      */
     function getID(): int
     {

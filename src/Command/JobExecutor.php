@@ -11,6 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class JobExecutor extends Command
 {
+    // TODO : duplicate code in RealEstateExecutor
     private JobHook $formatter;
     private Api $api;
 
