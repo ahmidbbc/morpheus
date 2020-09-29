@@ -11,7 +11,7 @@ class JobHook
     private static bool $pro_ad     = true;
 
     /**
-     * Just format and return the ad according to API request !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     * format and return the ad according to API rules
      * @param array $ad
      * @return array
      */
@@ -19,11 +19,13 @@ class JobHook
     {
         $formatted_ad = []; //not required initialization just for understanding
 
+        // generate unique ID (required field according to Api rules
         $formatted_ad['id']         = $this->getID();
+        // limit to 100 according to Api rules
         $formatted_ad['title']      = substr($ad['title'], 0, 100);
         $formatted_ad['vertical']   = self::$vertical;
         $formatted_ad['city']       = $ad['location_city'];
-        //$formatted_ad['zip_code'] = $ad['code_postal']; // TODO: get zip code from geolocation API webservice as GOogle Maps or OpenStreetMap ?
+        //$formatted_ad['zip_code'] = $ad['code_postal']; // TODO: get zip code from geolocation API webservice as Google Maps or OpenStreetMap ?
         $formatted_ad['pro_ad']     = self::$pro_ad;
         //$formatted_ad['contract']   = $ad['time_type'];
         //$formatted_ad['salary']   = ''; // optional
@@ -59,10 +61,14 @@ class JobHook
     }
 
 
-    function getID()
+    /**
+     * return unique id
+     * @return int
+     * TODO: duplicate => service ?
+     */
+    function getID(): int
     {
 
-        //return unique id
         return (int) (time().mt_rand());
 
     }

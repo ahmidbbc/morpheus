@@ -5,6 +5,11 @@ namespace App\Converter;
 class JsonConverter
 {
 
+    /**
+     * Return a JSON file content as an array
+     * @param string $filepath
+     * @return array
+     */
     public static function jsonToArray(string $filepath): array
     {
 

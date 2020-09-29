@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RealEstateExecutor extends Command
 {
 
-    // command to run the app (terminal) : "php bin/console real-estate-executor"
+    // command to execute (terminal) : "php bin/console real-estate-executor"
     protected function configure()
     {
         $this->setName('real-estate-executor');
@@ -21,6 +21,7 @@ class RealEstateExecutor extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        // vars
         $formatted_ads = [];
         $filepath = 'data/real_estate.json';
         $ads      = JsonConverter::jsonToArray($filepath);

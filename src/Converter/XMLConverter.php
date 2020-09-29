@@ -9,6 +9,7 @@ class XMLConverter
 {
 
     /**
+     * Return an XML file content as an array
      * @param string $filepath
      * @return array
      */
