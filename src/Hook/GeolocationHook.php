@@ -36,12 +36,17 @@ class GeolocationHook
 
         // get response as an array
         //$content = $response->getContent();
+        $statusCode = $response->getStatusCode();
         $content = $response->toArray();
 
-        // equivalent to if(!empty($content[0]['address']['postcode']))...
-        $zip_code = $content[0]['address']['postcode'] ?? '0';
 
-        //var_dump($zip_code);
+        // ternary + coalesce null operators (really !? good practice ??)
+        // equivalent to :
+        // if ($statusCode == 200 ) $zip_code = $content[0]['address']['postcode'] OR '0'
+        // else zip code = 0
+        $statusCode == 200 ? $zip_code = $content[0]['address']['postcode'] ?? '0' : $zip_code = '0';
+
+        //var_dump($statusCode);
 
         return $zip_code;
 
