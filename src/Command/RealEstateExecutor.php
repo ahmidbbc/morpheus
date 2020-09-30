@@ -41,7 +41,8 @@ class RealEstateExecutor extends Command
              * @param $ad: array
              */
             //$hook = new RealEstateHook();
-            $formatted_ads[$ad['id']] = $this->formatter->formatAd($ad);
+            $id = filter_var($ad['id'], FILTER_SANITIZE_NUMBER_INT);
+            $formatted_ads[$id] = $this->formatter->formatAd($ad);
 
             /**
              * instance of Api
@@ -50,7 +51,7 @@ class RealEstateExecutor extends Command
              * @param $vertical: string
              */
             //$api = new Api();
-            $this->api->send($formatted_ads[$ad['id']], $formatted_ads[$ad['id']]['vertical']);
+            $this->api->send($formatted_ads[$id], $formatted_ads[$id]['vertical']);
 
         }
 

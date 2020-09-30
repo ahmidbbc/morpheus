@@ -64,7 +64,7 @@ class RealEstateHook
         isset($buildedAd['type']) ? $formatted_ad['type'] = $buildedAd['type'] : '';
 
 
-        var_dump($formatted_ad);
+        //var_dump($formatted_ad);
 
         return $formatted_ad;
 
@@ -83,31 +83,31 @@ class RealEstateHook
         $buildedAd['id']         = $this->getID();
 
         // get title :string
-        $buildedAd['title']      = $ad['titre'];
+        $buildedAd['title']      = filter_var( $ad['titre'], FILTER_SANITIZE_STRING );
 
         // limit to 500 according to Api rules
-        $buildedAd['body']       = $ad['description'];
+        $buildedAd['body']       = filter_var( $ad['description'], FILTER_SANITIZE_STRING );
 
         // get vertical : string
         $buildedAd['vertical']   = self::$vertical;
 
         // setting and transtyping string to int only if positive numbers
         (int) $ad['prix'] > 0 && preg_match('/^[0-9]*$/', $ad['prix']) ?
-            $buildedAd['price'] = (int) $ad['prix'] : '';
+            $buildedAd['price'] = (int) filter_var( $ad['prix'], FILTER_SANITIZE_STRING ) : '';
 
         // limit to 100 according to Api rules
-        $buildedAd['city']       = $ad['ville'];
+        $buildedAd['city']       = filter_var( $ad['ville'], FILTER_SANITIZE_STRING );
 
         // get pro_ad boolean
         $buildedAd['pro_ad']     = self::$pro_ad;
 
         // check if zip code is > 0 and is numbers
         strlen( $ad['code_postal'] ) > 0 && preg_match('/^[0-9]*$/', $ad['code_postal']) ?
-            $buildedAd['zip_code']   = $ad['code_postal'] : '';
+            $buildedAd['zip_code']   = filter_var( $ad['code_postal'], FILTER_SANITIZE_STRING ) : '';
 
         // get images array if not empty
         count( $ad['photos'] ) > 0
-            ? $buildedAd['images'] = $ad['photos']
+            ? $buildedAd['images'] = $this->sanitizeArray($ad['photos'])
             : '';
 
         // check category $ad['categorie'] value and set corresponding const int (enum) according to Api rules
@@ -158,7 +158,7 @@ class RealEstateHook
      * @return int
      * TODO: duplicate in JobHook => service ?
      */
-    function getID(): int
+    public function getID(): int
     {
 
         $this->id++;
@@ -166,4 +166,37 @@ class RealEstateHook
         return $this->id;
 
     }
+
+    /**
+     * Function to sanitize all elements of an array
+     * TODO : duplicate -> service ?
+     * @param array $array
+     * @return array
+     */
+    public function sanitizeArray(array $array): array
+    {
+
+        $sanitizedArray = array();
+
+        foreach ($array as $el){
+
+            switch (gettype($el)){
+                case 'int':
+                    filter_var($el, FILTER_SANITIZE_NUMBER_INT);
+                    break;
+                case 'string':
+                    filter_var($el, FILTER_SANITIZE_STRING);
+                    break;
+                // can implement all sanitize type
+            }
+
+            array_push($sanitizedArray, $el);
+        }
+
+        //var_dump($sanitizedArray);
+
+        return $sanitizedArray;
+
+    }
+
 }

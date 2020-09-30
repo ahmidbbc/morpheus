@@ -19,7 +19,7 @@ class JsonConverter
          */
         $jsondata = file_get_contents($filepath);
 
-        //var_dump(json_decode($jsondata));
+        //var_dump($jsondata);
 
         /**
          * get and return assoc array from string content

@@ -32,8 +32,9 @@ class JobHook
         // to implement as a string unique id : just change getID() method, call uniqid('', true) => length=23
         // change returning (method & attribute) type and change Api Assert\Type
         // limit to 100 (int)
-        $buildedAd['id'] && $buildedAd['id'] < 101 ?
-            $formatted_ad['id'] = $buildedAd['id'] : $formatted_ad['id'] = null;
+        $id = filter_var($buildedAd['id'], FILTER_SANITIZE_NUMBER_INT);
+        $id && $id < 101 ?
+            $formatted_ad['id'] = (int) $id : $formatted_ad['id'] = null;
 
         // limit to 100 chars
         $formatted_ad['title']      = substr($buildedAd['title'], 0, 100);
@@ -78,17 +79,17 @@ class JobHook
         $buildedAd['id']         =  $ad['id'] ?? $this->getID();
 
         // get title :string
-        $buildedAd['title']      = $ad['title'];
+        $buildedAd['title']      = filter_var( $ad['title'], FILTER_SANITIZE_STRING );
 
         // concat description_poste & description_entreprise : string
         $body = $ad['description_poste'] . $ad['description_entreprise'];
-        $buildedAd['body']       = $body;
+        $buildedAd['body']       = filter_var( $body, FILTER_SANITIZE_STRING );
 
         // get vertical : string
         $buildedAd['vertical']   = self::$vertical;
 
         // get location_city : string
-        $buildedAd['city']       = $ad['location_city'];
+        $buildedAd['city']       = filter_var( $ad['location_city'], FILTER_SANITIZE_STRING );
 
         // get pro_ad boolean
         $buildedAd['pro_ad']     = self::$pro_ad;
@@ -102,13 +103,16 @@ class JobHook
          * not returning any postcode from openStreetMap
          */
         $geo = new GeolocationHook();
-        $buildedAd['zip_code'] = $geo->getZipCode( $ad['location_city'], $ad['location_state'] );
+        $zipCode = $geo->getZipCode( $ad['location_city'], $ad['location_state'] );
+        $buildedAd['zip_code'] = filter_var($zipCode, FILTER_SANITIZE_STRING);
+
 
         // format pictures string list to array according to Api rules
         $picturesString = trim($ad['pictures']);
         $picturesFormat = str_replace(" ", "\n", $picturesString);
         $picturesArray = explode("\n", $picturesFormat);
-        $buildedAd['images'] = $this->trimArray($picturesArray);
+        $trimedArray = $this->trimArray($picturesArray);
+        $buildedAd['images'] = $this->sanitizeArray($trimedArray);
 
         // not expected by the Api and not in XML file but documented as a required field ?
         // TODO : check this with my team / team Lead
@@ -126,7 +130,7 @@ class JobHook
      * @return int
      * TODO: duplicate in RealEstateHook => service ?
      */
-    function getID(): int
+    public function getID(): int
     {
         $this->id++;
 
@@ -151,4 +155,37 @@ class JobHook
         return $array;
 
     }
+
+    /**
+     * Function to sanitize all elements of an array
+     * TODO : duplicate -> service ?
+     * @param array $array
+     * @return array
+     */
+    public function sanitizeArray(array $array): array
+    {
+
+        $sanitizedArray = array();
+
+        foreach ($array as $el){
+
+            switch (gettype($el)){
+                case 'int':
+                    filter_var($el, FILTER_SANITIZE_NUMBER_INT);
+                    break;
+                case 'string':
+                    filter_var($el, FILTER_SANITIZE_STRING);
+                    break;
+                // can implement all sanitize type
+            }
+
+            array_push($sanitizedArray, $el);
+        }
+
+        //var_dump($sanitizedArray);
+
+        return $sanitizedArray;
+
+    }
+
 }
