@@ -30,6 +30,28 @@ class JobHookTest extends TestCase
     }
 
     /**
+     * Function to test if RealEstateHook::buildDescription return an array
+     */
+    public function testBuildDescriptionIsArray()
+    {
+
+        $array = [
+            'id' => 11,
+            'title' => 'test',
+            'description_poste' => 'no limit',
+            'description_entreprise' => 'no limit',
+            'price' => '200',
+            'location_city' => 'Evry',
+            'location_state' => '91',
+            'pictures' => 'heo.png helo.jpeg hello.tff'
+        ];
+
+        $realEstateHook = new JobHook();
+        $expected = $realEstateHook->buildDescription($array);
+        $this->assertIsArray($expected);
+    }
+
+    /**
      * Function to test if RealEstateHook::getID return an int
      */
     public function testGetIDIsInt()

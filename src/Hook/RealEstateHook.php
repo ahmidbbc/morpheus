@@ -56,7 +56,7 @@ class RealEstateHook
             $formatted_ad['zip_code'] = substr($buildedAd['zip_code'], 0, 5) : '';
 
         // get only the first 10 images from $buildedAd['images'] array
-        count( $buildedAd['images'] ) > 0 ?
+        isset($buildedAd['images']) && count( $buildedAd['images'] ) > 0 ?
             ( $formatted_ad['images'] = array_slice($buildedAd['images'], 0, 10) ) : '';
 
         $buildedAd['category'] ? $formatted_ad['category']     = $buildedAd['category'] : '';
@@ -130,8 +130,6 @@ class RealEstateHook
                 break;
         }
 
-        //$buildedAd['category']   = $ad['categorie'] ? 4 : 0;
-
         /*switch ($buildedAd['category']){
             case 1:
                 $buildedAd['type'] = self::TYPE_VENTE || self::TYPE_VIAGER; ??
@@ -149,7 +147,7 @@ class RealEstateHook
         // equivalent to if($buildedAd['category']) { $buildedAd['type'] = $ad['type'] }
         $buildedAd['category'] == 4 && $ad['type'] ? $buildedAd['type'] = self::TYPE_VENTE : '';
 
-        //var_dump($buildedAd);
+        //var_dump($ad);
 
         return $buildedAd;
 

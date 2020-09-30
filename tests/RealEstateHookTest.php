@@ -28,13 +28,79 @@ class RealEstateHookTest extends TestCase
             'prix' => '200',
             'ville' => 'Here',
             'code_postal' => '2092099',
-            'photos' => [],
-            'categorie' => 'animals',
-            'type' => 'felins',
+            'photos' => ['hello.png'],
+            'categorie' => 'vente'
         ];
 
         $realEstateHook = new RealEstateHook();
         $expected = $realEstateHook->formatAd($array);
+        $this->assertIsArray($expected);
+    }
+
+    /**
+     * Function to test if empty images array is not returning error from Api
+     */
+    public function testFormatAdImagesArrayIsEmpty()
+    {
+        $array = [
+            'id' => 1,
+            'titre' => 'test',
+            'description' => 'no limit',
+            'prix' => '200',
+            'ville' => 'Here',
+            'code_postal' => '2092099',
+            'photos' => [],
+            'categorie' => '',
+            'type' => 'maison'
+        ];
+
+        $realEstateHook = new RealEstateHook();
+        $expected = $realEstateHook->formatAd($array);
+        $this->assertIsArray($expected);
+    }
+
+    /**
+     * Function to test if type field value is returned when category is 4
+     */
+    public function testFormatAdWhenCategoryIsFour()
+    {
+        $array = [
+            'id' => 1,
+            'titre' => 'test',
+            'description' => 'no limit',
+            'prix' => '200',
+            'ville' => 'Here',
+            'code_postal' => '2092099',
+            'photos' => [],
+            'categorie' => 'bureaux et commerces',
+            'type' => 'maison'
+        ];
+
+        $realEstateHook = new RealEstateHook();
+        $result = $realEstateHook->formatAd($array);
+        $expected = 1;
+        $this->assertEquals($expected, $result['type']);
+    }
+
+    /**
+     * Function to test if RealEstateHook::buildDescription return an array
+     */
+    public function testBuildDescriptionIsArray()
+    {
+
+        $array = [
+            'id' => 1,
+            'titre' => 'test',
+            'description' => 'no limit',
+            'prix' => '200',
+            'ville' => 'Here',
+            'code_postal' => '2092099',
+            'photos' => [],
+            'categorie' => 'location',
+        ];
+
+        $realEstateHook = new RealEstateHook();
+        $expected = $realEstateHook->buildDescription($array);
         $this->assertIsArray($expected);
     }
 
@@ -65,11 +131,14 @@ class RealEstateHookTest extends TestCase
     public function testFormatAdRequiredFields()
     {
         //...
-    }*/
+    }
 
+     public function testGetIDIsUnique()
+    {
+        //...
+    }
+    */
 
-
-
-    // others test methods
+    // others test methods...
 
 }
