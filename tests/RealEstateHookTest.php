@@ -16,6 +16,9 @@ class RealEstateHookTest extends TestCase
         $this->assertEquals(2, 1+1);
     }
 
+    /**
+     * Function to test if RealEstateHook::formatAd return an array
+     */
     public function testFormatAdIsArray()
     {
         $array = [
@@ -35,14 +38,25 @@ class RealEstateHookTest extends TestCase
         $this->assertIsArray($expected);
     }
 
-    public function testGetID()
+
+    /**
+     * Function to test if RealEstateHook::getID return an int
+     */
+    public function testGetIDIsInt()
     {
         $realEstateHook = new RealEstateHook();
         $expected = $realEstateHook->getID();
         $this->assertIsInt($expected);
     }
 
+
     /*
+    public function testFormatAdAssertsValidation()
+    {
+        //...
+    }
+
+
     public function testFormatAdNotEmptyField()
     {
         //...
@@ -51,11 +65,11 @@ class RealEstateHookTest extends TestCase
     public function testFormatAdRequiredFields()
     {
         //...
-    }
-
-    public function testFormatAdAssertsValidation()
-    {
-        //...
     }*/
+
+
+
+
+    // others test methods
 
 }

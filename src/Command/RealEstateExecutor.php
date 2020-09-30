@@ -35,6 +35,8 @@ class RealEstateExecutor extends Command
 
             // format and send ads
 
+
+
             /**
              * instance of RealEstateHook
              * format this ad
@@ -42,6 +44,7 @@ class RealEstateExecutor extends Command
              */
             //$hook = new RealEstateHook();
             $formatted_ads[$ad['id']] = $this->formatter->formatAd($ad);
+            //var_dump($formatted_ads[$ad['id']]);
 
             /**
              * instance of Api
