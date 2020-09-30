@@ -44,9 +44,6 @@ class XMLConverter
                 //job array to push into jobs array
                 $job = array();
 
-                // unique id for each job to pass to formatted_ads
-                $job['id'] = uniqid();
-
                 //job nodes
                 foreach ($item->childNodes as $el) {
 

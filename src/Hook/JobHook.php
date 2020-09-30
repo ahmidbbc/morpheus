@@ -27,7 +27,13 @@ class JobHook
          * API rules validation
          */
 
-        $formatted_ad['id']         = $buildedAd['id'];
+
+        // documented as a string required field but expected as an integer according to Api Assert\Type
+        // to implement as a string unique id : just change getID() method, call uniqid('', true) => length=23
+        // change returning (method & attribute) type and change Api Assert\Type
+        // limit to 100 (int)
+        $buildedAd['id'] && $buildedAd['id'] < 101 ?
+            $formatted_ad['id'] = $buildedAd['id'] : $formatted_ad['id'] = null;
 
         // limit to 100 chars
         $formatted_ad['title']      = substr($buildedAd['title'], 0, 100);
@@ -69,7 +75,7 @@ class JobHook
         $buildedAd = array();
         
         // generate unique ID as this is a required field according to Api rules
-        $buildedAd['id']         = $this->getID();
+        $buildedAd['id']         =  $ad['id'] ?? $this->getID();
 
         // get title :string
         $buildedAd['title']      = $ad['title'];
@@ -108,7 +114,7 @@ class JobHook
         // TODO : check this with my team / team Lead
         // $buildedAd['contract']   = $ad['time_type'];
 
-        //var_dump($buildedAd);
+        //var_dump($ad['id']);
 
         return $buildedAd;
         
@@ -122,7 +128,7 @@ class JobHook
      */
     function getID(): int
     {
-        $this->id <= 100 ? $this->id++ : $this->id = 100;
+        $this->id++;
 
         return $this->id;
 

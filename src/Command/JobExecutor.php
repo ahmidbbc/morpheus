@@ -40,7 +40,8 @@ class JobExecutor extends Command
              * @param $ad: array
              */
             //$jobHook = new JobHook();
-            $formatted_ads[$ad['id']] = $this->formatter->formatAd($ad);
+            $f_ad = $this->formatter->formatAd($ad);
+            $formatted_ads[$f_ad['id']] = $f_ad;
 
             /**
              * instance of Api
@@ -49,7 +50,7 @@ class JobExecutor extends Command
              * @param $vertical: string
              */
             //$api = new Api();
-            $this->api->send($formatted_ads[$ad['id']], $formatted_ads[$ad['id']]['vertical']);
+            $this->api->send($f_ad, $f_ad['vertical']);
 
         }
 

@@ -110,7 +110,7 @@ class RealEstateHook
             ? $buildedAd['images'] = $ad['photos']
             : '';
 
-        // check if isset category and set corresponding value according to Api rules
+        // check category $ad['categorie'] value and set corresponding const int (enum) according to Api rules
         // equivalent to !empty( $ad['categorie'] )
         switch (strtolower($ad['categorie'])){
             case 'vente':
@@ -145,6 +145,7 @@ class RealEstateHook
                 break;
         }*/
 
+        // only type for category 4 is required so just testing this one
         // equivalent to if($buildedAd['category']) { $buildedAd['type'] = $ad['type'] }
         $buildedAd['category'] == 4 && $ad['type'] ? $buildedAd['type'] = self::TYPE_VENTE : '';
 
@@ -163,11 +164,8 @@ class RealEstateHook
     {
 
         $this->id++;
-        //$this->id <= 100 ? $this->id++ : $this->id = 100;
-        //var_dump($this->id);
 
         return $this->id;
-        //return (int) (time().mt_rand());
 
     }
 }
