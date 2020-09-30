@@ -9,53 +9,62 @@ class RealEstateHook
     private static string $vertical = 'real_estate';
     private static bool $pro_ad     = true;
 
+    private const CATEGORIE_VENTE = 1;
+    private const CATEGORIE_LOCATION = 2;
+    private const CATEGORIE_COLOCATION = 3;
+    private const CATEGORIE_BUREAUX_ET_COMMERCES = 4;
+
+    private const TYPE_VENTE = "1";
+    private const TYPE_LOCATION = "2"; // unused
+    private const TYPE_VIAGER = "3"; // unused
+
     public function formatAd(array $ad): array
     {
 
+        //vars
         $formatted_ad = []; //not required initialization just for understanding
+        $buildedAd = $this->buildDescription($ad);
 
-        // as ID is a required field, return $ad['id'] if not (null, empty, or false)
-        // else generate unique ID
-        // :? return false if empty as ?? return empty string
-        $formatted_ad['id']         = $ad['id'] ?: $this->getID();
+        /**
+         * API rules validation
+         */
 
-        // limit to 100 according to Api rules
-        $formatted_ad['title']      = substr($ad['titre'], 0, 100);
+        $formatted_ad['id']         = $buildedAd['id'];
 
-        // limit to 500 according to Api rules
-        $formatted_ad['body']       = substr($ad['description'], 0, 500);
+        // limit to 100 chars
+        $formatted_ad['title']      = substr($buildedAd['title'], 0, 100);
 
-        // limited by self private attribute (not visible for web client)
+        // limit to 500 chars
+        $formatted_ad['body']       = substr($buildedAd['body'], 0, 500);
+
+        // limited by self private attribute : not visible by web client
         // TODO : should be force limit to 100 chars ?
-        $formatted_ad['vertical']   = self::$vertical;
+        $formatted_ad['vertical']   = $buildedAd['vertical'];
 
-        // transtyping string to int
-        (int) $ad['prix'] > 0 ? $formatted_ad['price'] = (int) $ad['prix'] : '';
+        // no limit price
+        $formatted_ad['price']      = $buildedAd['price'];
 
-        // limit to 100 according to Api rules
-        $formatted_ad['city']       = substr($ad['ville'], 0, 100);
-
-        // limit to 5 according to Api rules
-        strlen( $ad['code_postal'] ) > 0 && strlen ( $ad['code_postal'] ) < 6
-            ? $formatted_ad['zip_code']   = $ad['code_postal']
-            : $formatted_ad['zip_code']   = substr($ad['code_postal'], 0, 4);
+        // limit to 100 chars
+        $formatted_ad['city']       = substr($buildedAd['city'], 0, 100);
 
         // limited by self private attribute as a boolean according to Api rules
         // not visible by web client
-        $formatted_ad['pro_ad']     = self::$pro_ad;
+        $formatted_ad['pro_ad']     = $buildedAd['pro_ad'];
 
-        // get only the first  10 images from $ad['photos'] array according to to Api rules
-        count( $ad['photos'] ) > 0
-            ? ( $formatted_ad['images'] = array_slice($ad['photos'], 0, 10) )
-            : '';
+        // send zip code only if not empty string returned by GeolocationHook
+        !empty($buildedAd['zip_code']) ?
+            $formatted_ad['zip_code'] = substr($buildedAd['zip_code'], 0, 5) : '';
 
-        // equivalent to !empty($ad['categorie'])
-        $formatted_ad['category']   = $ad['categorie'] ? 4 : 0;
+        // get only the first 10 images from $buildedAd['images'] array
+        count( $buildedAd['images'] ) > 0 ?
+            ( $formatted_ad['images'] = array_slice($buildedAd['images'], 0, 10) ) : '';
 
-        // equivalent to if($formatted_ad['category']) { $formatted_ad['type'] = $ad['type'] }
-        $formatted_ad['category'] ? $formatted_ad['type'] = $ad['type'] : '';
+        $buildedAd['category'] ? $formatted_ad['category']     = $buildedAd['category'] : '';
 
-        //var_dump($ad['photos']);
+        isset($buildedAd['type']) ? $formatted_ad['type'] = $buildedAd['type'] : '';
+
+
+        var_dump($formatted_ad);
 
         return $formatted_ad;
 
@@ -65,10 +74,83 @@ class RealEstateHook
      * TODO
      * Just build body ad ?
      */
-    public function buildDescription()
+    public function buildDescription(array $ad): array
     {
-        // ...
 
+        $buildedAd = array();
+
+        // generate unique ID as this is a required field according to Api rules
+        $buildedAd['id']         = $this->getID();
+
+        // get title :string
+        $buildedAd['title']      = $ad['titre'];
+
+        // limit to 500 according to Api rules
+        $buildedAd['body']       = $ad['description'];
+
+        // get vertical : string
+        $buildedAd['vertical']   = self::$vertical;
+
+        // setting and transtyping string to int only if positive numbers
+        (int) $ad['prix'] > 0 && preg_match('/^[0-9]*$/', $ad['prix']) ?
+            $buildedAd['price'] = (int) $ad['prix'] : '';
+
+        // limit to 100 according to Api rules
+        $buildedAd['city']       = $ad['ville'];
+
+        // get pro_ad boolean
+        $buildedAd['pro_ad']     = self::$pro_ad;
+
+        // check if zip code is > 0 and is numbers
+        strlen( $ad['code_postal'] ) > 0 && preg_match('/^[0-9]*$/', $ad['code_postal']) ?
+            $buildedAd['zip_code']   = $ad['code_postal'] : '';
+
+        // get images array if not empty
+        count( $ad['photos'] ) > 0
+            ? $buildedAd['images'] = $ad['photos']
+            : '';
+
+        // check if isset category and set corresponding value according to Api rules
+        // equivalent to !empty( $ad['categorie'] )
+        switch (strtolower($ad['categorie'])){
+            case 'vente':
+                $buildedAd['category'] = self::CATEGORIE_VENTE;
+                break;
+            case 'location':
+                $buildedAd['category'] = self::CATEGORIE_LOCATION;
+                break;
+            case 'colocation':
+                $buildedAd['category'] = self::CATEGORIE_COLOCATION;
+                break;
+            case 'bureaux et commerces':
+                $buildedAd['category'] = self::CATEGORIE_BUREAUX_ET_COMMERCES;
+                break;
+            default:
+                $buildedAd['category'] = 0;
+                break;
+        }
+
+        //$buildedAd['category']   = $ad['categorie'] ? 4 : 0;
+
+        /*switch ($buildedAd['category']){
+            case 1:
+                $buildedAd['type'] = self::TYPE_VENTE || self::TYPE_VIAGER; ??
+            case 4:
+                $buildedAd['type'] = self::TYPE_VENTE;
+                break;
+            case 3:
+                $buildedAd['type'] = self::TYPE_LOCATION;
+                break;
+            default:
+                break;
+        }*/
+
+        // equivalent to if($buildedAd['category']) { $buildedAd['type'] = $ad['type'] }
+        $buildedAd['category'] == 4 && $ad['type'] ? $buildedAd['type'] = self::TYPE_VENTE : '';
+
+        //var_dump($buildedAd);
+
+        return $buildedAd;
 
     }
 

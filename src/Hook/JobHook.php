@@ -19,56 +19,42 @@ class JobHook
      */
     public function formatAd(array $ad): array
     {
+        //vars
         $formatted_ad = []; //not required initialization just for understanding
+        $buildedAd = $this->buildDescription($ad);
 
-        // generate unique ID (required field according to Api rules
-        $formatted_ad['id']         = $this->getID();
+        /**
+         * API rules validation
+         */
 
-        // limit to 100 according to Api rules
-        $formatted_ad['title']      = substr($ad['title'], 0, 100);
+        $formatted_ad['id']         = $buildedAd['id'];
 
-        // format body to concat and limit to 500 according to Api rules
-        $body = substr($ad['description_poste'] . $ad['description_entreprise'], 0, 500);
-        $formatted_ad['body']       = $body;
+        // limit to 100 chars
+        $formatted_ad['title']      = substr($buildedAd['title'], 0, 100);
 
-        // limited by self private attribute (not visible for web client)
+        // limit to 500 chars
+        $formatted_ad['body']       = substr($buildedAd['body'], 0, 500);
+
+        // limited by self private attribute : not visible by web client
         // TODO : should be force limit to 100 chars ?
-        $formatted_ad['vertical']   = self::$vertical;
+        $formatted_ad['vertical']   = $buildedAd['vertical'];
 
-        // limit to 100 according to Api rules
-        $formatted_ad['city']       = substr($ad['location_city'], 0, 100);
+        // limit to 100 chars
+        $formatted_ad['city']       = substr($buildedAd['city'], 0, 100);
 
         // limited by self private attribute as a boolean according to Api rules
         // not visible by web client
-        $formatted_ad['pro_ad']     = self::$pro_ad;
+        $formatted_ad['pro_ad']     = $buildedAd['pro_ad'];
 
-        // format pictures string list to array according to Api rules
-        $picturesString = trim($ad['pictures']);
-        $picturesFormat = str_replace(" ", "\n", $picturesString);
-        $picturesArray = explode("\n", $picturesFormat);
-        $pictures = $this->trimArray($picturesArray);
+        // limit to 5 numbers
+        $buildedAd['zip_code'] ? $formatted_ad['zip_code'] = substr($buildedAd['zip_code'], 0, 4) : '';
 
-        // get only the first 10 images from $pictures array according to to Api rules
-        count( $pictures ) > 0
-            ? ( $formatted_ad['images'] = array_slice($pictures, 0, 10) )
-            : '';
 
-        // not expected by the Api but documented as required field ?
-        // TODO : check this with my team / team Lead
-        //$formatted_ad['contract']   = $ad['time_type'];
+        // get only the first 10 images from $buildedAd['images'] array
+        count( $buildedAd['images'] ) > 0 ?
+            ( $formatted_ad['images'] = array_slice($buildedAd['images'], 0, 10) ) : '';
 
-        // TODO: get zip code from geolocation API webservice as Google Maps or openStreetMap ?
-        // TODO : is done !? improve ??
-        /**
-         * instance of GeolocationHook
-         * get zip code from openStreetMap API webservice : less reliable than Google Map
-         * sometimes missing the zip code : ex. "Metz with location_state 57 not returning entire postcode"
-         */
-        $geo = new GeolocationHook();
-        $address = $geo->getZipCode( $ad['location_city'], $ad['location_state'] );
-        $address ? $formatted_ad['zip_code'] = $address : '';
-
-        //var_dump($this->id);
+        //var_dump($formatted_ad);
 
         return $formatted_ad;
     }
@@ -77,9 +63,55 @@ class JobHook
      * TODO
      * Just build body ad ?
      */
-    public function buildDescription()
+    public function buildDescription(array $ad): array
     {
-        //...
+        
+        $buildedAd = array();
+        
+        // generate unique ID as this is a required field according to Api rules
+        $buildedAd['id']         = $this->getID();
+
+        // get title :string
+        $buildedAd['title']      = $ad['title'];
+
+        // concat description_poste & description_entreprise : string
+        $body = $ad['description_poste'] . $ad['description_entreprise'];
+        $buildedAd['body']       = $body;
+
+        // get vertical : string
+        $buildedAd['vertical']   = self::$vertical;
+
+        // get location_city : string
+        $buildedAd['city']       = $ad['location_city'];
+
+        // get pro_ad boolean
+        $buildedAd['pro_ad']     = self::$pro_ad;
+
+        // TODO: get zip code from geolocation API webservice as Google Maps or openStreetMap ?
+        // TODO = is done ? 'Nice :-)' : 'improve geolocation hook'
+        /**
+         * instance of GeolocationHook
+         * get zip code from openStreetMap API webservice => less reliable than Google Map
+         * sometimes missing the zip code : ex. "location_city=Metz&location_state=57"
+         * not returning any postcode from openStreetMap
+         */
+        $geo = new GeolocationHook();
+        $buildedAd['zip_code'] = $geo->getZipCode( $ad['location_city'], $ad['location_state'] );
+
+        // format pictures string list to array according to Api rules
+        $picturesString = trim($ad['pictures']);
+        $picturesFormat = str_replace(" ", "\n", $picturesString);
+        $picturesArray = explode("\n", $picturesFormat);
+        $buildedAd['images'] = $this->trimArray($picturesArray);
+
+        // not expected by the Api and not in XML file but documented as a required field ?
+        // TODO : check this with my team / team Lead
+        // $buildedAd['contract']   = $ad['time_type'];
+
+        //var_dump($buildedAd);
+
+        return $buildedAd;
+        
     }
 
 
@@ -93,8 +125,6 @@ class JobHook
         $this->id <= 100 ? $this->id++ : $this->id = 100;
 
         return $this->id;
-
-        //return (int) (time().mt_rand());
 
     }
 

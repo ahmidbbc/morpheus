@@ -46,7 +46,7 @@ class GeolocationHook
         // else { zip code = 0 }
         $statusCode == 200 ? $zip_code = $content[0]['address']['postcode'] ?? '0' : $zip_code = '0';
 
-        //var_dump($statusCode);
+        //var_dump($content);
 
         return $zip_code;
 
