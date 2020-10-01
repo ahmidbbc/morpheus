@@ -21,7 +21,9 @@ Le code postal n’est pas présent dans les données XML mais on aimerait tout 
 
 Vous devez rendre un projet Symfony fonctionnel qui transforme des annonces pour un envoi vers l’API Leboncoin. Vous pouvez aussi rendre un court rapport de quelques lignes décrivant certains problèmes à résoudre ou des pistes d’amélioration.
 
-Les données des clients ne sont pas forcément de bonne qualité ou à l’inverse intègrent des informations dont l’API Leboncoin n’a pas besoin. Cependant, pour améliorer la qualité des annonces importées, vous pouvez proposer des solutions pour intégrer davantage de données. Vous pouvez implémenter ces solutions pour prouver le concept proposé mais tout ceci est optionnel.
+Les données des clients ne sont pas forcément de bonne qualité ou à l’inverse intègrent des informations dont l’API Leboncoin n’a pas besoin. 
+
+Cependant, pour améliorer la qualité des annonces importées, vous pouvez proposer des solutions pour intégrer davantage de données. Vous pouvez implémenter ces solutions pour prouver le concept proposé mais tout ceci est optionnel.
 
 Une attention sera apportée à la qualité du code mais faites au plus simple avec le temps que vous avez.
 
@@ -35,6 +37,11 @@ La documentation de l'API est disponible dans le fichier `Sujet.pdf`.
 bin/console command-name
 ```
 
+----------------------------------------------------
+----------------------------------------------------
+
+# Abdelhamid Benmeziane
+
 ## Installation
 
 1. Cloner le projet git ou télécharger le dossier ZIP puis décompresser à l'emplacement de votre choix
@@ -43,13 +50,13 @@ bin/console command-name
 
 3. Exécuter les commandes :
 
-    * pour envoyer les annonces de job vers l'api à partir du fichier `job.xml` : 
+    * pour envoyer les annonces de Job vers l'Api à partir du fichier `job.xml` : 
    
    ```
    php bin/console job-executor
    ```
    
-    * pour envoyer les annonces immobilières vers l'api à partir du fichier `real_estate.json` :
+    * pour envoyer les annonces immobilières vers l'Api à partir du fichier `real_estate.json` :
     
     ```
     php bin/console real-estate-executor
@@ -61,12 +68,12 @@ bin/console command-name
     php bin/phpunit
     ```
 
-## Dependances installées pour les besoins de l'exercice
+## Dépendances installées pour les besoins de l'exercice
 
     * symfony/http-client (GeolocationHook)
     * PHPUnit (testing)
 
-## GeolocationHook : récuperer le code postal
+## GeolocationHook : récupérer le code postal
 
 Pour répondre au besoin de récupérer le code postal pour les annonces immobilières (Bonus), j'ai choisi par souci de simplification de consommer une API web open source : nominatim / openmapstreet.
 
@@ -76,8 +83,76 @@ La documentation se trouve à https://nominatim.org/
 
 Elle n'est pas aussi fiable que des webservices comme Google Map pour certaines requêtes (documenté dans le code) mais elle rest plutôt de bonne qualité.
 
-La classe GeolocationHook via la methode publique getZipCode() permet de recupérer le code postal retourner par la réponse du serveur.
+La classe GeolocationHook via la methode publique getZipCode() permet de récupérer le code postal retourner par la réponse du serveur.
  
 La requête GET est envoyé à l'adresse https://nominatim.openstreetmap.org/?<params>
+
+
+## Sécurité
+
+C'est un sujet large (XSS, CSRF, SQL, FORCE BRUTE....), ici il n'y a ni base de données ni formulaires pour le moment.
+
+Cependant certaines données proviennent de fichier non propriétaire ou de webservices. J'ai donc eu recours à des "inbuilt functions" de PHP afin d'échapper les scripts et nettoyer les données principalement avec `filter_vars( $input, FILTER_SANITIZE_TYPE )`.
+J'ai également implémenter une fonction (qui pourrait devenir un service ou hook) pour nettoyer les éléments d'un tableau (array).
+
+## Tests
+
+Comme demandé dans le sujet les tests ont étét réalisé uniquement pour les Hooks.
+
+Faute de temps la couverture n'est pas à 100% sur les fonctions des class concernées mais quelques tests intéressant ont été réalisés.
+
+Pour ce faire, j'ai utilisé PHPunit.
+
+Pour l'installer si vous ne l'avez pas déjà fait
+
+```
+composer require --dev symfony/phpunit-bridge
+```
+
+Pour lancer les tests : 
+
+```
+php bin/phpunit
+```
+
+
+## Problèmes rencontrés
+
+Cela concernait principalement la cncordance des données entre l'Api et la documentation (champs requit ou non, le type de donnés accéptée).
+
+Je me suis conformé à l'Api car il a faut bien choisir entre la modification de l'api ou ne pas se conformer à la documentation.
+
+Dans la réalité, la plupart du temps, c'est plutôt la documentation qui n'est pas à jour.
+
+De plus si nous consommons une API web il n'est pas possible de la modifier, il faudra donc se fier à la reponse du serveur en ca d'erreurs. 
+
+
+## TODO
+
+- Améliorer la gestion des erreurs
+- Formatter et concatener plus de données pour améliorer la qualité des annonces
+- Revoir les règles de l'Api ( par exemple les limites, les types de données... )
+- Créer une interface graphique en extrayant pour des utilisateurs internes
+- Automatiser certaines tâches grâce à la gestion des événements ( EventDispatcher || SplObserver ) par exemple lorsqu'un fichier est chargé dans le dossier /data
+
+
+## Conclusion
+
+Exercice très intéressant pour se familiariser avec Symfony, PHP 7 et ses nouveautés, la manipulation de fichiers XML et JSON et les données, la créations de Hooks, les webservices et bien plus.
+
+J'espère que mon application vous a plu et que vous aurez des retours constructifs à me faire pour m'améliorer. 
+
+Je vous donne rendez-vous dans quelques jours ( le temps de documenter et d'expliquer ) pour un autre exercice Symfony reposant cette fois sur Doctrine ORM, Twig, Webpack Encore, Alice Fixtures... :
+
+[CRUD'IT HauteSchool](https://github.com/ahmidbbc/crudIT)
+
+Vos retours sont les bienvenus à [ahmidbbc@gmail.com](mailto:ahmidbbc@gmail.com)
+
+
+Merci d'avoir pris le temps de décortiquer mon code et de tester mon application !
+
+Enjoy ! :metal:
+
+
 
 
