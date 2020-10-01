@@ -151,7 +151,7 @@ Vos retours sont les bienvenus à [ahmidbbc@gmail.com](mailto:ahmidbbc@gmail.com
 
 Merci d'avoir pris le temps de décortiquer mon code et de tester mon application !
 
-Enjoy ! :metal:
+Enjoy ! :smile: :metal:
 
 
 
