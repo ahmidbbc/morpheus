@@ -83,27 +83,27 @@ La documentation se trouve à https://nominatim.org/
 
 Elle n'est pas aussi fiable que des webservices comme Google Map pour certaines requêtes (documenté dans le code) mais elle rest plutôt de bonne qualité.
 
-La classe GeolocationHook via la methode publique getZipCode() permet de récupérer le code postal retourner par la réponse du serveur.
+La classe GeolocationHook via la methode publique getZipCode() permet de récupérer le code postal retourné par la réponse du serveur.
  
-La requête GET est envoyé à l'adresse https://nominatim.openstreetmap.org/?<params>
+La requête GET est envoyée à l'adresse https://nominatim.openstreetmap.org/?<params>
 
 
 ## Sécurité
 
 C'est un sujet large (XSS, CSRF, SQL, FORCE BRUTE....), ici il n'y a ni base de données ni formulaires pour le moment.
 
-Cependant certaines données proviennent de fichier non propriétaire ou de webservices. J'ai donc eu recours à des "inbuilt functions" de PHP afin d'échapper les scripts et nettoyer les données principalement avec `filter_vars( $input, FILTER_SANITIZE_TYPE )`.
+Cependant certaines données proviennent de fichiers non propriétaire ou de webservices. J'ai donc eu recours à des "inbuilt functions" de PHP afin d'échapper les caractères spéciaux pour eviter l'injectinon de scripts et nettoyer les données principalement avec `filter_vars( $input, FILTER_SANITIZE_TYPE )`.
 J'ai également implémenter une fonction (qui pourrait devenir un service ou hook) pour nettoyer les éléments d'un tableau (array).
 
 ## Tests
 
-Comme demandé dans le sujet les tests ont étét réalisé uniquement pour les Hooks.
+Comme demandé dans le sujet, les tests ont été réalisés uniquement pour les Hooks.
 
-Faute de temps la couverture n'est pas à 100% sur les fonctions des class concernées mais quelques tests intéressant ont été réalisés.
+Faute de temps, la couverture n'est pas à 100% sur les fonctions des Class concernées mais quelques tests intéressants ont été réalisés.
 
 Pour ce faire, j'ai utilisé PHPunit.
 
-Pour l'installer si vous ne l'avez pas déjà fait
+Pour l'installer si vous ne l'avez pas déjà fait:
 
 ```
 composer require --dev symfony/phpunit-bridge
@@ -118,9 +118,9 @@ php bin/phpunit
 
 ## Problèmes rencontrés
 
-Cela concernait principalement la cncordance des données entre l'Api et la documentation (champs requit ou non, le type de donnés accéptée).
+Cela concernait principalement la concordance des données entre l'Api et la documentation (champs requis ou non, le type de donnés accéptée).
 
-Je me suis conformé à l'Api car il a faut bien choisir entre la modification de l'api ou ne pas se conformer à la documentation.
+Je me suis conformé à l'Api car il a faut bien choisir entre la modification de l'api ou ne pas se conformer à la documentation (dans ce cas précis).
 
 Dans la réalité, la plupart du temps, c'est plutôt la documentation qui n'est pas à jour.
 
@@ -132,7 +132,7 @@ De plus si nous consommons une API web il n'est pas possible de la modifier, il 
 - Améliorer la gestion des erreurs
 - Formatter et concatener plus de données pour améliorer la qualité des annonces
 - Revoir les règles de l'Api ( par exemple les limites, les types de données... )
-- Créer une interface graphique en extrayant pour des utilisateurs internes
+- Créer une interface graphique pour des utilisateurs internes
 - Automatiser certaines tâches grâce à la gestion des événements ( EventDispatcher || SplObserver ) par exemple lorsqu'un fichier est chargé dans le dossier /data
 
 
